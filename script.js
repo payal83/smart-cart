@@ -1,4 +1,9 @@
 // Sample data for cart items, recommendations, and product information
+const itemImages = [
+    'walmrt.jpg'
+];
+
+
 const cartItems = [
     { name: 'Amul Milk', price: 29.99 },
     { name: 'Britannia Bread', price: 12.49 },
@@ -24,6 +29,20 @@ const productInfo = {
     'Eggs': { expiryDate: '2024-Sep-05', type: 'Non-Veg', allergies: ['None'] },
     'Parle-G': { expiryDate: '2024-Aug-20', type: 'Veg', allergies: ['Contains Milk, Wheat, and is made in a facility that process peanuts, tree nuts, soy, dairy, and wheat ingredients.'] },
 };
+
+let currentItemIndex = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const nextItemButton = document.getElementById('next-item-button');
+    const itemImage = document.getElementById('item-image');
+
+    // Handle the "Next Item" button click
+    nextItemButton.addEventListener('click', () => {
+        currentItemIndex = (currentItemIndex + 1) % itemImages.length;
+        itemImage.src = itemImages[currentItemIndex];
+        itemImage.style.display = 'block'; // Show the image
+    });
+});
 
 // Cart Summary and Recommendations (index.html)
 function updateCart() {
