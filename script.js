@@ -35,9 +35,11 @@ let currentItemIndex = 0;
 document.addEventListener('DOMContentLoaded', () => {
     const nextItemButton = document.getElementById('next-item-button');
     const itemImage = document.getElementById('item-image');
+    const aiMessageElement = document.getElementById('ai-message');
 
     // Handle the "Next Item" button click
     nextItemButton.addEventListener('click', () => {
+        aiMessageElement.textContent = 'Navigating to the next item [Real Orange Juice]...';
         currentItemIndex = (currentItemIndex + 1) % itemImages.length;
         itemImage.src = itemImages[currentItemIndex];
         itemImage.style.display = 'block'; // Show the image
