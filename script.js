@@ -1,21 +1,29 @@
-// Sample data for cart items, recommendations, and shopping list
+// Sample data for cart items, recommendations, and product information
 const cartItems = [
-    { name: 'Milk', price: 2.99 },
-    { name: 'Bread', price: 1.49 },
-    { name: 'Eggs', price: 3.19 },
+    { name: 'Amul Milk', price: 29.99 },
+    { name: 'Britannia Bread', price: 12.49 },
+    { name: 'Eggs', price: 10.19 },
 ];
 
 const recommendations = [
-    { name: 'Butter', price: 2.49 },
-    { name: 'Cheese', price: 4.99 },
-    { name: 'Juice', price: 3.89 },
+    { name: 'Amul Butter', price: 50.49 },
+    { name: 'Amul Cheese', price: 60.99 },
+    { name: 'Go Cheese', price: 86.89 },
 ];
 
 const shoppingList = [
-    'Tomatoes',
+    'Real Orange Juice',
     'Cucumbers',
     'Olive Oil',
 ];
+
+// Predefined product information
+const productInfo = {
+    'Milk': { expiryDate: '2024-Sep-01', type: 'Veg', allergies: ['Lactose'] },
+    'Bread': { expiryDate: '2024-Aug-25', type: 'Vegan', allergies: ['Gluten'] },
+    'Eggs': { expiryDate: '2024-Sep-05', type: 'Non-Veg', allergies: ['None'] },
+    'Parle-G': { expiryDate: '2024-Aug-20', type: 'Veg', allergies: ['Contains Milk, Wheat, and is made in a facility that process peanuts, tree nuts, soy, dairy, and wheat ingredients.'] },
+};
 
 // Cart Summary and Recommendations (index.html)
 function updateCart() {
@@ -27,13 +35,13 @@ function updateCart() {
 
         cartItems.forEach(item => {
             const listItem = document.createElement('li');
-            listItem.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+            listItem.textContent = `${item.name} : Rs. ${item.price.toFixed(2)}`;
             cartItemsList.appendChild(listItem);
 
             totalPrice += item.price;
         });
 
-        totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
+        totalPriceElement.textContent = `Rs. ${totalPrice.toFixed(2)}`;
     }
 
     const recommendItemsList = document.getElementById('recommend-items');
@@ -42,29 +50,57 @@ function updateCart() {
 
         recommendations.forEach(item => {
             const listItem = document.createElement('li');
-            listItem.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+            listItem.textContent = `${item.name} : Rs. ${item.price.toFixed(2)}`;
             recommendItemsList.appendChild(listItem);
         });
     }
 }
 
-// Simulate product detection from camera capture (index.html)
-function handleCameraCapture() {
-    const cameraInput = document.getElementById('camera-input');
+// Display product information (index.html)
+function displayProductInfo(productName) {
+    const productDetailsElement = document.getElementById('product-details');
+    if (productDetailsElement) {
+        const info = productInfo[productName];
+        if (info) {
+            productDetailsElement.innerHTML = `
+                <strong>Name:</strong> ${productName}<br>
+                <strong>Expiry Date:</strong> ${info.expiryDate}<br>
+                <strong>Type:</strong> ${info.type}<br>
+                <strong>Allergens:</strong> ${info.allergies.join(', ')}
+            `;
+        } else {
+            productDetailsElement.textContent = 'No information available for this product.';
+        }
+    }
+}
+
+// Initialize camera feed and handle product detection
+function setupCamera() {
+    const video = document.getElementById('video');
     const captureMessage = document.getElementById('capture-message');
 
-    if (cameraInput && captureMessage) {
-        cameraInput.addEventListener('change', () => {
-            const file = cameraInput.files[0];
-            if (file) {
-                // Simulate product detection
-                const detectedProduct = { name: 'Orange Juice', price: 3.99 }; // Example detected product
-                cartItems.push(detectedProduct);
-                updateCart();
-                captureMessage.textContent = `${detectedProduct.name} has been added to your cart for $${detectedProduct.price.toFixed(2)}.`;
-            }
-        });
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+            })
+            .catch(function (error) {
+                console.error("Error accessing the camera: ", error);
+                captureMessage.textContent = "Unable to access the camera.";
+            });
     }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            // Simulate product detection
+            const detectedProduct = 'Parle-G'; // Example detected product
+            const product = { name: detectedProduct, price: 3.99 }; 
+            cartItems.push(product);
+            updateCart();
+            captureMessage.textContent = `${detectedProduct} has been added to your cart for Rs. ${product.price.toFixed(2)}.`;
+            displayProductInfo(detectedProduct);
+        }
+    });
 }
 
 // AI Assistant Navigation (navigation.html)
@@ -73,7 +109,7 @@ function setupNavigation() {
     const aiMessageElement = document.getElementById('ai-message');
     if (navigateBtn && aiMessageElement) {
         navigateBtn.addEventListener('click', () => {
-            aiMessageElement.textContent = 'Navigating to the next item...';
+            aiMessageElement.textContent = 'Navigating to the next item [Real Orange Juice]...';
         });
     }
 }
@@ -103,10 +139,10 @@ function updateShoppingList() {
     }
 }
 
-// Initialize the correct functionality based on the page
+// Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
     updateCart();
-    handleCameraCapture();
+    setupCamera();
     setupNavigation();
     updateShoppingList();
 });
