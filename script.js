@@ -101,6 +101,17 @@ function setupCamera() {
             displayProductInfo(detectedProduct);
         }
     });
+
+    document.addEventListener('ontouchend', (event) => {
+        // Prevent default behavior (e.g., scrolling) if needed
+        event.preventDefault();
+        const detectedProduct = 'Parle-G'; // Example detected product
+        const product = { name: detectedProduct, price: 3.99 }; 
+        cartItems.push(product);
+        updateCart();
+        captureMessage.textContent = `${detectedProduct} has been added to your cart for Rs. ${product.price.toFixed(2)}.`;
+        displayProductInfo(detectedProduct);
+    });
 }
 
 // AI Assistant Navigation (navigation.html)
